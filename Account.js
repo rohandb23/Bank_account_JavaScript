@@ -1,4 +1,7 @@
 const PassBook = require("./PassBook")
+const ValidationError = require("./error/ValidationError")
+const UnauthorizedError = require("./error/UnAuthorizedError")
+const NotFound = require("./error/NotFound")
 
 class Account{
     static accountId = 0
@@ -32,7 +35,7 @@ class Account{
 
     withdraw(amount){
         try {
-            if(typeof amount != "number" || (amount<0 && amount>this.balance)){
+            if(typeof amount != "number" || (amount<0 || amount > this.balance)){
                 throw new ValidationError("amount not valid")
             }
             this.balance = this.balance-amount

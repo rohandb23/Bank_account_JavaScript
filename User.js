@@ -1,8 +1,8 @@
 const Account = require("./Account")
 const Bank = require("./Bank")
-const ValidationError = require("./ValidationError")
-const UnauthorizedError = require("./UnAuthorizedError")
-const NotFound = require("./NotFound")
+const ValidationError = require("./error/ValidationError")
+const UnauthorizedError = require("./error/UnAuthorizedError")
+const NotFound = require("./error/NotFound")
 class User{
     static userId = 0
     static allUsers =[]
@@ -227,9 +227,9 @@ class User{
                 throw new ValidationError("bank ID not valid")
             }
             let createdAccount = new Account(balance)
-            this.accounts.push(createdAccount)
             let indexOfBank = this.findBank(bankId)
             User.allBanks[indexOfBank].accountsInBank.push(createdAccount)
+            this.accounts.push(createdAccount)
             return this.accounts
         } catch (error) {
             return error
@@ -331,7 +331,7 @@ class User{
             }
             throw new NotFound("receiver account not found")
         } catch (error) {
-            throw error
+            throw error.specificMessage
         }
     }
 
@@ -341,11 +341,11 @@ class User{
                 throw new UnauthorizedError("you are not user")
             }
             let indexOfReceiver = this.findUser(receiverUserId) 
-            let findingAccount = User.allUsers[indexOfReceiver]
-            let indexOfReceiverAccount = this.findReceiverAccount(findingAccount, receiverAccountId)
+            let reciever = User.allUsers[indexOfReceiver]
+            let indexOfReceiverAccount = this.findReceiverAccount(reciever, receiverAccountId)
             let indexOfSenderAccount = this.findAccount(fromAccoutId)
             this.accounts[indexOfSenderAccount].withdraw(amount)
-            findingAccount.accounts[indexOfReceiverAccount].deposit(amount)
+            reciever.accounts[indexOfReceiverAccount].deposit(amount)
             return this.accounts
         } 
         catch (error) {
@@ -415,66 +415,30 @@ u1.createAccount(1, 50000)
 console.log("U1 account after creating account");
 console.log(u1.getAllAccount());
 console.log("---------------------------------------------------");
+
 u1.deposit(0, 5000)
 console.log("U1 account after depositing money in account");
 console.log(u1.getAllAccount());
 console.log("---------------------------------------------------");
 
-// u1.withdraw(0, 10000)
-
-// console.log(u1.getPassBook(0));
-
 u2.createAccount(0, 15000)
 console.log("U2 account after creating account");
 console.log(u2.getAllAccount());
 console.log("---------------------------------------------------");
-u2.transfer(5000, 2, 1, 0)
+
+console.log(u2.transfer(50000, 2, 1, 0))
 console.log("total bank acccounts in bank 1");
 console.log(a.getAccountsInBank(0));
 console.log("---------------------------------------------------");
+
 console.log("U1 Account 1 passbook");
 console.log(u1.getPassBook(0));
 console.log("---------------------------------------------------");
+
 console.log("U2 Account 1 passbook");
 console.log(u2.getPassBook(2));
 console.log("---------------------------------------------------");
+
 console.log("networth of u1 : ", u1.getNetworth(1))
 console.log("networth of U2 : ", u2.getNetworth(2));
 console.log("---------------------------------------------------");
-// console.log("this is user 2");
-
-// //console.log(u2.getAllAccount());
-
-// console.log(u2.getPassBook(4));
-
-
-// console.log("networth of U1 : ", a.getNetworth(1));
-
-//console.log(a.getAccountsInBank(0));
-
-// // console.log(a.getAllUser());
-
-// u1.createAccount(10000)
-// // u1.createAccount(15000)
-
-// console.log(u1.getAccount());
-
-// u1.deposit(0, 5000)
-
-// console.log(u1.getAccount());
-
-// u1.deposit(0, 10000)
-
-// console.log(u1.getAccount());
-
-// u1.withdraw(0, 10000)
-
-// console.log(u1.getAccount());
-
-// console.log(u1.getPassBook(0));
-
-// a.updateUser(1, "fullName", "hemant")
-// console.log(a.getAllUser());
-// console.log(a);
-// console.log(u1);
-// console.log(u2);
